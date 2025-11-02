@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RifqyBudget – Catat Keuangan</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png" type="image/png">
+  <meta name="theme-color" content="#6c5ce7">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #6c5ce7;
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --text: #2d3436;
+      --border: rgba(108,92,231,0.2);
+      --danger: #e17055;
+      --success: #00b894;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #2d3436; --card: #353b48; --text: #dfe6e9; --border: rgba(108,92,231,0.3); }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 24px; }
+    h1 { font-size: 28px; color: var(--primary); margin-bottom: 8px; }
+    .subtitle { font-size: 15px; opacity: 0.8; }
+    .card { background: var(--card); border-radius: 20px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border: 1px solid var(--border); margin-bottom: 20px; }
+    .input-group { display: flex; gap: 10px; margin-bottom: 16px; }
+    input, select, button { padding: 14px; border-radius: 12px; font-size: 16px; }
+    input, select { border: 2px solid var(--border); background: var(--bg); color: var(--text); flex: 1; }
+    button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: 600; }
+    button:hover { opacity: 0.9; }
+    .expense-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .expense-amount { font-weight: 600; color: var(--danger); }
+    .total { font-size: 20px; font-weight: bold; text-align: center; margin: 16px 0; }
+    .budget-warning { background: rgba(225,112,85,0.15); color: var(--danger); padding: 12px; border-radius: 12px; text-align: center; font-weight: 600; }
+    .chart-container { height: 250px; margin: 20px 0; }
+    footer { text-align: center; margin-top: 40px; font-size: 13px; opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>RifqyBudget</h1>
+      <p class="subtitle">Catat Pengeluaran, Hemat Uang!</p>
+    </div>
+
+    <!-- INPUT -->
+    <div class="card">
+      <div class="input-group">
+        <input type="text" id="desc" placeholder="Deskripsi (misal: Beli Beras)">
+        <input type="number" id="amount" placeholder="Rp">
+      </div>
+      <div class="input-group">
+        <select id="category">
+          <option>Makan</option>
+          <option>Transport</option>
+          <option>Belanja</option>
+          <option>Hiburan</option>
+          <option>Lainnya</option>
+        </select>
+        <button onclick="addExpense()">Tambah</button>
+      </div>
+    </div>
+
+    <!-- TOTAL & BUDGET -->
+    <div class="card">
+      <div class="total" id="total">Total: Rp0</div>
+      <div class="input-group">
+        <input type="number" id="budget" placeholder="Set Budget Bulanan">
+        <button onclick="setBudget()">Set</button>
+      </div>
+      <div id="budget-warning" class="budget-warning" style="display:none;"></div>
+    </div>
+
+    <!-- GRAFIK -->
+    <div class="card">
+      <h3 style="text-align:center; margin-bottom:16px;">Grafik Bulanan</h3>
+      <div class="chart-container">
+        <canvas id="chart"></canvas>
+      </div>
+    </div>
+
+    <!-- DAFTAR PENGELUARAN -->
+    <div class="card">
+      <h3 style="margin-bottom:16px;">Pengeluaran Hari Ini</h3>
+      <div id="expenses-list">
+        <div style="text-align:center; opacity:0.6;">Belum ada pengeluaran.</div>
+      </div>
+    </div>
+
+    <footer>© 2025 RifqyBudget – 100% Gratis</footer>
+  </div>
+
+  <script>
+    let expenses = JSON.parse(localStorage.getItem('rifqyBudget') || '[]');
+    let budget = parseInt(localStorage.getItem('rifqyBudgetLimit') || '0');
+    let chart;
+
+    function addExpense() {
+      const desc = document.getElementById('desc').value.trim();
+      const amount = parseInt(document.getElementById('amount').value);
+      const category = document.getElementById('category').value;
+      if (!desc || !amount) return alert('Isi deskripsi & jumlah!');
+
+      expenses.unshift({ desc, amount, category, date: new Date().toLocaleDateString('id-ID') });
+      localStorage.setItem('rifqyBudget', JSON.stringify(expenses));
+      document.getElementById('desc').value = '';
+      document.getElementById('amount').value = '';
+      updateUI();
+    }
+
+    function setBudget() {
+      const val = parseInt(document.getElementById('budget').value);
+      if (!val) return;
+      budget = val;
+      localStorage.setItem('rifqyBudgetLimit', budget);
+      document.getElementById('budget').value = '';
+      updateUI();
+    }
+
+    function updateUI() {
+      const todayTotal = expenses.reduce((a, c) => a + c.amount, 0);
+      document.getElementById('total').textContent = `Total: Rp${todayTotal.toLocaleString('id-ID')}`;
+
+      // Budget warning
+      if (budget > 0 && todayTotal > budget * 0.8) {
+        document.getElementById('budget-warning').style.display = 'block';
+        document.getElementById('budget-warning').textContent = `Peringatan: Sudah ${Math.round(todayTotal/budget*100)}% dari budget!`;
+      } else {
+        document.getElementById('budget-warning').style.display = 'none';
+      }
+
+      // List
+      const list = document.getElementById('expenses-list');
+      if (expenses.length === 0) {
+        list.innerHTML = '<div style="text-align:center; opacity:0.6;">Belum ada pengeluaran.</div>';
+      } else {
+        list.innerHTML = expenses.map(e => `
+          <div class="expense-item">
+            <div>${e.desc} <small>(${e.category})</small></div>
+            <div class="expense-amount">-Rp${e.amount.toLocaleString('id-ID')}</div>
+          </div>
+        `).join('');
+      }
+
+      // Chart
+      const data = {};
+      expenses.forEach(e => data[e.category] = (data[e.category] || 0) + e.amount);
+      const labels = Object.keys(data);
+      const values = Object.values(data);
+
+      if (chart) chart.destroy();
+      chart = new Chart(document.getElementById('chart'), {
+        type: 'pie',
+        data: { labels, datasets: [{ data: values, backgroundColor: ['#ff6b6b','#4ecdc4','#45b7d1','#f9ca24','#6c5ce7'] }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+      });
+    }
+
+    // INIT
+    updateUI();
+  </script>
+</body>
+</html>
