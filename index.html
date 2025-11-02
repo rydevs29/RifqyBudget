@@ -22,23 +22,35 @@
       :root { --bg: #2d3436; --card: #353b48; --text: #dfe6e9; --border: rgba(108,92,231,0.3); }
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; }
-    .container { max-width: 600px; margin: 0 auto; }
-    .header { text-align: center; margin-bottom: 24px; }
-    h1 { font-size: 28px; color: var(--primary); margin-bottom: 8px; }
-    .subtitle { font-size: 15px; opacity: 0.8; }
-    .card { background: var(--card); border-radius: 20px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border: 1px solid var(--border); margin-bottom: 20px; }
-    .input-group { display: flex; gap: 10px; margin-bottom: 16px; }
-    input, select, button { padding: 14px; border-radius: 12px; font-size: 16px; }
-    input, select { border: 2px solid var(--border); background: var(--bg); color: var(--text); flex: 1; }
-    button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: 600; }
+    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; }
+    .container { max-width: 800px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 20px; }
+    h1 { font-size: 28px; color: var(--primary); margin-bottom: 6px; }
+    .subtitle { font-size: 14px; opacity: 0.8; }
+
+    .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    @media (min-width: 768px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+    .card { background: var(--card); border-radius: 16px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); border: 1px solid var(--border); }
+    .input-group { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    input, select, button { padding: 12px; border-radius: 12px; font-size: 15px; }
+    input, select { border: 2px solid var(--border); background: var(--bg); color: var(--text); flex: 1; min-width: 120px; }
+    button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: 600; min-width: 80px; }
     button:hover { opacity: 0.9; }
-    .expense-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+
+    .stats { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin: 16px 0; }
+    .total-expense { color: var(--danger); }
+    .remaining { color: var(--success); }
+
+    .chart-container { height: 220px; margin: 16px 0; }
+    .expense-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
     .expense-amount { font-weight: 600; color: var(--danger); }
-    .total { font-size: 20px; font-weight: bold; text-align: center; margin: 16px 0; }
-    .budget-warning { background: rgba(225,112,85,0.15); color: var(--danger); padding: 12px; border-radius: 12px; text-align: center; font-weight: 600; }
-    .chart-container { height: 250px; margin: 20px 0; }
-    footer { text-align: center; margin-top: 40px; font-size: 13px; opacity: 0.7; }
+
+    .budget-input { display: flex; gap: 8px; margin-top: 12px; }
+    .budget-input input { flex: 1; }
+    .budget-input button { min-width: 60px; }
+
+    footer { text-align: center; margin-top: 32px; font-size: 12px; opacity: 0.7; }
   </style>
 </head>
 <body>
@@ -48,47 +60,51 @@
       <p class="subtitle">Catat Pengeluaran, Hemat Uang!</p>
     </div>
 
-    <!-- INPUT -->
-    <div class="card">
-      <div class="input-group">
-        <input type="text" id="desc" placeholder="Deskripsi (misal: Beli Beras)">
-        <input type="number" id="amount" placeholder="Rp">
+    <div class="grid">
+      <!-- INPUT -->
+      <div class="card">
+        <div class="input-group">
+          <input type="text" id="desc" placeholder="Deskripsi">
+          <input type="number" id="amount" placeholder="Rp">
+        </div>
+        <div class="input-group">
+          <select id="category">
+            <option>Makan</option>
+            <option>Transport</option>
+            <option>Belanja</option>
+            <option>Hiburan</option>
+            <option>Lainnya</option>
+          </select>
+          <button onclick="addExpense()">Tambah</button>
+        </div>
       </div>
-      <div class="input-group">
-        <select id="category">
-          <option>Makan</option>
-          <option>Transport</option>
-          <option>Belanja</option>
-          <option>Hiburan</option>
-          <option>Lainnya</option>
-        </select>
-        <button onclick="addExpense()">Tambah</button>
+
+      <!-- STATS & BUDGET -->
+      <div class="card">
+        <div class="stats">
+          <div>Total: <span id="total-expense" class="total-expense">Rp0</span></div>
+          <div>Sisa: <span id="remaining" class="remaining">Rp0</span></div>
+        </div>
+        <div class="budget-input">
+          <input type="number" id="budget" placeholder="Budget Bulanan">
+          <button onclick="setBudget()">Set</button>
+        </div>
       </div>
     </div>
 
-    <!-- TOTAL & BUDGET -->
+    <!-- GRAFIK BULANAN (LINE CHART) -->
     <div class="card">
-      <div class="total" id="total">Total: Rp0</div>
-      <div class="input-group">
-        <input type="number" id="budget" placeholder="Set Budget Bulanan">
-        <button onclick="setBudget()">Set</button>
-      </div>
-      <div id="budget-warning" class="budget-warning" style="display:none;"></div>
-    </div>
-
-    <!-- GRAFIK -->
-    <div class="card">
-      <h3 style="text-align:center; margin-bottom:16px;">Grafik Bulanan</h3>
+      <h3 style="text-align:center; margin-bottom:12px; font-size:16px;">Grafik Pengeluaran Bulanan</h3>
       <div class="chart-container">
-        <canvas id="chart"></canvas>
+        <canvas id="monthlyChart"></canvas>
       </div>
     </div>
 
     <!-- DAFTAR PENGELUARAN -->
     <div class="card">
-      <h3 style="margin-bottom:16px;">Pengeluaran Hari Ini</h3>
+      <h3 style="margin-bottom:12px; font-size:16px;">Pengeluaran Bulan Ini</h3>
       <div id="expenses-list">
-        <div style="text-align:center; opacity:0.6;">Belum ada pengeluaran.</div>
+        <div style="text-align:center; opacity:0.6; font-size:14px;">Belum ada pengeluaran.</div>
       </div>
     </div>
 
@@ -98,21 +114,29 @@
   <script>
     let expenses = JSON.parse(localStorage.getItem('rifqyBudget') || '[]');
     let budget = parseInt(localStorage.getItem('rifqyBudgetLimit') || '0');
-    let chart;
+    let monthlyChart;
 
+    // Helper: Format bulan
+    function getMonthKey(date) {
+      const d = new Date(date);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    // Tambah pengeluaran
     function addExpense() {
       const desc = document.getElementById('desc').value.trim();
       const amount = parseInt(document.getElementById('amount').value);
       const category = document.getElementById('category').value;
       if (!desc || !amount) return alert('Isi deskripsi & jumlah!');
 
-      expenses.unshift({ desc, amount, category, date: new Date().toLocaleDateString('id-ID') });
+      expenses.push({ desc, amount, category, date: new Date().toISOString() });
       localStorage.setItem('rifqyBudget', JSON.stringify(expenses));
       document.getElementById('desc').value = '';
       document.getElementById('amount').value = '';
       updateUI();
     }
 
+    // Set budget
     function setBudget() {
       const val = parseInt(document.getElementById('budget').value);
       if (!val) return;
@@ -122,24 +146,21 @@
       updateUI();
     }
 
+    // Update UI
     function updateUI() {
-      const todayTotal = expenses.reduce((a, c) => a + c.amount, 0);
-      document.getElementById('total').textContent = `Total: Rp${todayTotal.toLocaleString('id-ID')}`;
+      const currentMonth = getMonthKey(new Date());
+      const monthExpenses = expenses.filter(e => getMonthKey(e.date) === currentMonth);
+      const total = monthExpenses.reduce((a, c) => a + c.amount, 0);
 
-      // Budget warning
-      if (budget > 0 && todayTotal > budget * 0.8) {
-        document.getElementById('budget-warning').style.display = 'block';
-        document.getElementById('budget-warning').textContent = `Peringatan: Sudah ${Math.round(todayTotal/budget*100)}% dari budget!`;
-      } else {
-        document.getElementById('budget-warning').style.display = 'none';
-      }
+      document.getElementById('total-expense').textContent = `Rp${total.toLocaleString('id-ID')}`;
+      document.getElementById('remaining').textContent = budget > 0 ? `Rp${(budget - total).toLocaleString('id-ID')}` : '-';
 
       // List
       const list = document.getElementById('expenses-list');
-      if (expenses.length === 0) {
-        list.innerHTML = '<div style="text-align:center; opacity:0.6;">Belum ada pengeluaran.</div>';
+      if (monthExpenses.length === 0) {
+        list.innerHTML = '<div style="text-align:center; opacity:0.6; font-size:14px;">Belum ada pengeluaran.</div>';
       } else {
-        list.innerHTML = expenses.map(e => `
+        list.innerHTML = monthExpenses.map(e => `
           <div class="expense-item">
             <div>${e.desc} <small>(${e.category})</small></div>
             <div class="expense-amount">-Rp${e.amount.toLocaleString('id-ID')}</div>
@@ -147,17 +168,41 @@
         `).join('');
       }
 
-      // Chart
-      const data = {};
-      expenses.forEach(e => data[e.category] = (data[e.category] || 0) + e.amount);
-      const labels = Object.keys(data);
-      const values = Object.values(data);
+      // Line Chart: 6 bulan terakhir
+      const months = [];
+      const data = [];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i);
+        const key = getMonthKey(d);
+        months.push(d.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' }));
+        const monthTotal = expenses
+          .filter(e => getMonthKey(e.date) === key)
+          .reduce((a, c) => a + c.amount, 0);
+        data.push(monthTotal);
+      }
 
-      if (chart) chart.destroy();
-      chart = new Chart(document.getElementById('chart'), {
-        type: 'pie',
-        data: { labels, datasets: [{ data: values, backgroundColor: ['#ff6b6b','#4ecdc4','#45b7d1','#f9ca24','#6c5ce7'] }] },
-        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+      if (monthlyChart) monthlyChart.destroy();
+      monthlyChart = new Chart(document.getElementById('monthlyChart'), {
+        type: 'line',
+        data: {
+          labels: months,
+          datasets: [{
+            label: 'Pengeluaran',
+            data: data,
+            borderColor: '#e17055',
+            backgroundColor: 'rgba(225,112,85,0.1)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { callback: v => 'Rp' + v.toLocaleString('id-ID') } }
+          }
+        }
       });
     }
 
