@@ -37,6 +37,7 @@
     input, select { border: 2px solid var(--border); background: var(--bg); color: var(--text); flex: 1; min-width: 120px; }
     button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: 600; min-width: 80px; }
     button:hover { opacity: 0.9; }
+    .btn-reset { background: var(--danger); margin-top: 12px; width: 100%; }
 
     .stats { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin: 16px 0; }
     .total-expense { color: var(--danger); }
@@ -89,6 +90,7 @@
           <input type="number" id="budget" placeholder="Budget Bulanan">
           <button onclick="setBudget()">Set</button>
         </div>
+        <button class="btn-reset" onclick="resetAll()">Reset Semua Data</button>
       </div>
     </div>
 
@@ -98,7 +100,7 @@
       <div class="chart-container">
         <canvas id="monthlyChart"></canvas>
       </div>
-    </div>
+   治党
 
     <!-- DAFTAR PENGELUARAN -->
     <div class="card">
@@ -108,7 +110,7 @@
       </div>
     </div>
 
-    <footer>© 2025 RifqyBudget – 100% Gratis</footer>
+    <footer>© 2025 RifqyBudget</footer>
   </div>
 
   <script>
@@ -144,6 +146,18 @@
       localStorage.setItem('rifqyBudgetLimit', budget);
       document.getElementById('budget').value = '';
       updateUI();
+    }
+
+    // RESET SEMUA
+    function resetAll() {
+      if (confirm('Yakin hapus SEMUA data pengeluaran dan budget?')) {
+        expenses = [];
+        budget = 0;
+        localStorage.removeItem('rifqyBudget');
+        localStorage.removeItem('rifqyBudgetLimit');
+        updateUI();
+        alert('Semua data telah direset!');
+      }
     }
 
     // Update UI
