@@ -6,100 +6,93 @@
   <title>Login – RifqyBudget</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.png" type="image/png">
-  <meta name="theme-color" content="#6c5ce7">
+  <meta name="theme-color" content="#4e54c8">
   <style>
     :root {
-      --primary: #6c5ce7;
-      --bg: #f8f9fa;
-      --card: #ffffff;
-      --text: #2d3436;
-      --border: rgba(108,92,231,0.2);
-      --radius: 24px;
-      --gap: 16px;
-      --shadow: 0 12px 32px rgba(0,0,0,0.1);
-    }
-    @media (prefers-color-scheme: dark) {
-      :root { --bg: #1a1a2e; --card: #16213e; --text: #e0e0e0; --border: rgba(108,92,231,0.3); }
+      --primary: #4e54c8;
+      --secondary: #8f94fb;
+      --bg: #0f0c29;
+      --glass: rgba(255, 255, 255, 0.1);
+      --text: #ffffff;
+      --radius: 28px;
+      --shadow: 0 20px 40px rgba(0,0,0,0.3);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: 'Segoe UI', sans-serif; 
-      background: var(--bg); 
-      color: var(--text); 
-      min-height: 100vh; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      padding: var(--gap); 
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
-
-    .login-container { width: 100%; max-width: 420px; }
     .login-card {
-      background: var(--card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: var(--radius);
       padding: 40px 32px;
+      width: 100%;
+      max-width: 420px;
       box-shadow: var(--shadow);
-      border: 1px solid var(--border);
       text-align: center;
     }
-    .login-header h1 {
-      font-size: 36px;
-      color: var(--primary);
+    h1 {
+      font-size: 38px;
+      background: linear-gradient(to right, #4e54c8, #8f94fb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin-bottom: 8px;
-      font-weight: 700;
     }
-    .login-header .subtitle {
-      font-size: 17px;
-      opacity: 0.8;
+    .subtitle {
+      font-size: 16px;
+      opacity: 0.9;
       margin-bottom: 32px;
     }
-    .login-input {
+    .input {
       width: 100%;
-      padding: 18px 20px;
+      padding: 18px 22px;
       font-size: 18px;
-      border: 2px solid var(--border);
+      border: 2px solid rgba(255,255,255,0.2);
       border-radius: 18px;
-      background: var(--bg);
-      color: var(--text);
+      background: rgba(255,255,255,0.1);
+      color: white;
       margin-bottom: 20px;
       transition: all 0.3s;
     }
-    .login-input:focus {
+    .input:focus {
       outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(108,92,231,0.2);
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 4px rgba(143,148,251,0.3);
     }
-    .login-button {
+    .btn {
       width: 100%;
       padding: 18px;
       font-size: 18px;
       font-weight: 600;
-      background: var(--primary);
+      background: linear-gradient(to right, #4e54c8, #8f94fb);
       color: white;
       border: none;
       border-radius: 18px;
       cursor: pointer;
       transition: all 0.3s;
     }
-    .login-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(108,92,231,0.3);
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(143,148,251,0.4);
     }
-
-    .hidden { display: none; }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
-  <div class="login-container">
-    <div class="login-card">
-      <div class="login-header">
-        <h1>RifqyBudget</h1>
-        <p class="subtitle">Masuk dengan nama kamu untuk mulai hemat</p>
-      </div>
-      <input type="text" class="login-input" id="username" placeholder="Nama kamu" autocomplete="off">
-      <button class="login-button" onclick="login()">Masuk Sekarang</button>
-    </div>
+  <div class="login-card">
+    <h1>RifqyBudget</h1>
+    <p class="subtitle">Masuk dengan nama kamu untuk mulai mengelola keuangan</p>
+    <input type="text" class="input" id="username" placeholder="Nama kamu" autocomplete="off">
+    <button class="btn" onclick="login()">Masuk Sekarang</button>
   </div>
 
   <script>
@@ -109,10 +102,7 @@
       localStorage.setItem('rifqyBudget_user', name);
       window.location.href = 'index.html';
     }
-
-    document.addEventListener('keypress', e => {
-      if (e.key === 'Enter') login();
-    });
+    document.addEventListener('keypress', e => e.key === 'Enter' && login());
   </script>
 </body>
-</html>
+                     </html>
