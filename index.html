@@ -17,27 +17,28 @@
       --border: rgba(108,92,231,0.2);
       --danger: #e17055;
       --success: #00b894;
+      --warning: #fdcb6e;
     }
     @media (prefers-color-scheme: dark) {
       :root { --bg: #2d3436; --card: #353b48; --text: #dfe6e9; --border: rgba(108,92,231,0.3); }
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; }
-    .container { max-width: 800px; margin: 0 auto; }
-    .header { text-align: center; margin-bottom: 20px; }
-    h1 { font-size: 28px; color: var(--primary); margin-bottom: 6px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 24px; }
+    h1 { font-size: 28px; color: var(--primary); margin-bottom: 4px; }
     .subtitle { font-size: 14px; opacity: 0.8; }
 
     .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
     @media (min-width: 768px) { .grid { grid-template-columns: 1fr 1fr; } }
 
-    .card { background: var(--card); border-radius: 16px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); border: 1px solid var(--border); }
+    .card { background: var(--card); border-radius: 16px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); border: 1px solid var(--border); }
     .input-group { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-    input, select, button { padding: 12px; border-radius: 12px; font-size: 15px; }
-    input, select { border: 2px solid var(--border); background: var(--bg); color: var(--text); flex: 1; min-width: 120px; }
+    input, select, button { padding: 12px 14px; border-radius: 12px; font-size: 15px; }
+    input, select { border: 2px solid var(--border); background: var(--bg); color: var(--text); flex: 1; min-width: 100px; }
     button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: 600; min-width: 80px; }
     button:hover { opacity: 0.9; }
-    .btn-reset { background: var(--danger); margin-top: 12px; width: 100%; }
+    .btn-reset { background: var(--warning); color: #2d3436; margin-top: 12px; width: 100%; font-weight: 600; }
 
     .stats { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin: 16px 0; }
     .total-expense { color: var(--danger); }
@@ -65,7 +66,7 @@
       <!-- INPUT -->
       <div class="card">
         <div class="input-group">
-          <input type="text" id="desc" placeholder="Deskripsi">
+          <input type="text" id="desc" placeholder="Deskripsi (contoh: Beli Beras)">
           <input type="number" id="amount" placeholder="Rp">
         </div>
         <div class="input-group">
@@ -94,13 +95,13 @@
       </div>
     </div>
 
-    <!-- GRAFIK BULANAN (LINE CHART) -->
+    <!-- GRAFIK BULANAN -->
     <div class="card">
       <h3 style="text-align:center; margin-bottom:12px; font-size:16px;">Grafik Pengeluaran Bulanan</h3>
       <div class="chart-container">
         <canvas id="monthlyChart"></canvas>
       </div>
-   治党
+    </div>
 
     <!-- DAFTAR PENGELUARAN -->
     <div class="card">
@@ -110,7 +111,7 @@
       </div>
     </div>
 
-    <footer>© 2025 RifqyBudget</footer>
+    <footer>© 2025 RifqyBudget – 100% Gratis</footer>
   </div>
 
   <script>
@@ -118,13 +119,11 @@
     let budget = parseInt(localStorage.getItem('rifqyBudgetLimit') || '0');
     let monthlyChart;
 
-    // Helper: Format bulan
     function getMonthKey(date) {
       const d = new Date(date);
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     }
 
-    // Tambah pengeluaran
     function addExpense() {
       const desc = document.getElementById('desc').value.trim();
       const amount = parseInt(document.getElementById('amount').value);
@@ -138,7 +137,6 @@
       updateUI();
     }
 
-    // Set budget
     function setBudget() {
       const val = parseInt(document.getElementById('budget').value);
       if (!val) return;
@@ -148,9 +146,8 @@
       updateUI();
     }
 
-    // RESET SEMUA
     function resetAll() {
-      if (confirm('Yakin hapus SEMUA data pengeluaran dan budget?')) {
+      if (confirm('Yakin ingin menghapus SEMUA data pengeluaran dan budget?')) {
         expenses = [];
         budget = 0;
         localStorage.removeItem('rifqyBudget');
@@ -160,7 +157,6 @@
       }
     }
 
-    // Update UI
     function updateUI() {
       const currentMonth = getMonthKey(new Date());
       const monthExpenses = expenses.filter(e => getMonthKey(e.date) === currentMonth);
@@ -169,7 +165,6 @@
       document.getElementById('total-expense').textContent = `Rp${total.toLocaleString('id-ID')}`;
       document.getElementById('remaining').textContent = budget > 0 ? `Rp${(budget - total).toLocaleString('id-ID')}` : '-';
 
-      // List
       const list = document.getElementById('expenses-list');
       if (monthExpenses.length === 0) {
         list.innerHTML = '<div style="text-align:center; opacity:0.6; font-size:14px;">Belum ada pengeluaran.</div>';
@@ -182,7 +177,6 @@
         `).join('');
       }
 
-      // Line Chart: 6 bulan terakhir
       const months = [];
       const data = [];
       for (let i = 5; i >= 0; i--) {
@@ -220,7 +214,6 @@
       });
     }
 
-    // INIT
     updateUI();
   </script>
 </body>
