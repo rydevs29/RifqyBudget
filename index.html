@@ -18,47 +18,112 @@
       --danger: #e17055;
       --success: #00b894;
       --warning: #fdcb6e;
+      --logout: #e74c3c;
+      --radius: 20px;
+      --gap: 16px;
+      --padding: 24px;
     }
     @media (prefers-color-scheme: dark) {
       :root { --bg: #2d3436; --card: #353b48; --text: #dfe6e9; --border: rgba(108,92,231,0.3); }
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--gap); }
     
-    .container { width: 100%; max-width: 900px; }
+    .container { width: 100%; max-width: 900px; margin: 0 auto; }
     .header { text-align: center; margin-bottom: 32px; }
-    h1 { font-size: 32px; color: var(--primary); }
-    .subtitle { font-size: 16px; opacity: 0.8; margin-top: 8px; }
+    h1 { font-size: 32px; color: var(--primary); margin-bottom: 4px; }
+    .subtitle { font-size: 16px; opacity: 0.8; }
 
-    .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    .grid { display: grid; gap: var(--gap); grid-template-columns: 1fr; }
     @media (min-width: 768px) { .grid { grid-template-columns: 1fr 1fr; } }
 
-    .card { background: var(--card); border-radius: 16px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); border: 1px solid var(--border); }
-    .input-group { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-    input, select, button { padding: 14px; border-radius: 12px; font-size: 16px; }
-    input, select { border: 2px solid var(--border); background: var(--bg); color: var(--text); flex: 1; min-width: 100px; }
-    button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: 600; min-width: 80px; }
-    button:hover { opacity: 0.9; }
-    .btn-reset { background: var(--warning); color: #2d3436; margin-top: 16px; width: 100%; font-weight: 600; }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: var(--padding);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
 
-    .stats { display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; margin: 16px 0; }
+    .input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    input, select, button {
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 16px;
+      flex: 1;
+      min-width: 100px;
+    }
+    input, select {
+      border: 2px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+    }
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      min-width: 80px;
+    }
+    button:hover { opacity: 0.9; }
+
+    .btn-full {
+      width: 100%;
+      margin-top: 12px;
+      font-weight: 600;
+    }
+    .btn-reset { background: var(--warning); color: #2d3436; }
+    .btn-logout { background: var(--logout); }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 16px 0;
+    }
     .total-expense { color: var(--danger); }
     .remaining { color: var(--success); }
 
     .chart-container { height: 240px; margin: 16px 0; }
-    .expense-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 15px; }
+    .expense-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+    }
     .expense-amount { font-weight: 600; color: var(--danger); }
 
-    .budget-input { display: flex; gap: 8px; margin-top: 16px; }
+    .budget-input {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
     .budget-input input { flex: 1; }
     .budget-input button { min-width: 60px; }
 
-    .login-card { max-width: 400px; margin: 0 auto; text-align: center; }
+    .login-card {
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+    }
     .login-card input { width: 100%; margin-bottom: 16px; }
     .login-card button { width: 100%; }
 
     .hidden { display: none; }
     footer { text-align: center; margin-top: 40px; font-size: 12px; opacity: 0.7; }
+
+    /* SEMUA CARD PUNYA PADDING SAMA */
+    .card > *:last-child { margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -75,7 +140,7 @@
     </div>
   </div>
 
-  <!-- MAIN APP (HIDDEN AWALNYA) -->
+  <!-- MAIN APP -->
   <div id="app" class="container hidden">
     <div class="header">
       <h1>RifqyBudget</h1>
@@ -111,14 +176,14 @@
           <input type="number" id="budget" placeholder="Budget Bulanan">
           <button onclick="setBudget()">Set</button>
         </div>
-        <button class="btn-reset" onclick="resetAll()">Reset Semua Data</button>
-        <button style="margin-top:8px; background:#e74c3c; width:100%;" onclick="logout()">Logout</button>
+        <button class="btn-full btn-reset" onclick="resetAll()">Reset Semua Data</button>
+        <button class="btn-full btn-logout" onclick="logout()">Logout</button>
       </div>
     </div>
 
     <!-- GRAFIK -->
     <div class="card">
-      <h3 style="text-align:center; margin-bottom:12px; font-size:17px;">Grafik Pengeluaran Bulanan</h3>
+      <h3 style="text-align:center; margin-bottom:16px; font-size:17px;">Grafik Pengeluaran Bulanan</h3>
       <div class="chart-container">
         <canvas id="monthlyChart"></canvas>
       </div>
@@ -126,7 +191,7 @@
 
     <!-- LIST -->
     <div class="card">
-      <h3 style="margin-bottom:12px; font-size:17px;">Pengeluaran Bulan Ini</h3>
+      <h3 style="margin-bottom:16px; font-size:17px;">Pengeluaran Bulan Ini</h3>
       <div id="expenses-list">
         <div style="text-align:center; opacity:0.6; font-size:15px;">Belum ada pengeluaran.</div>
       </div>
@@ -141,7 +206,6 @@
     let budget = 0;
     let monthlyChart;
 
-    // Cek login
     function checkLogin() {
       const saved = localStorage.getItem('rifqyBudget_user');
       if (saved) {
@@ -154,7 +218,6 @@
       }
     }
 
-    // Login
     function login() {
       const name = document.getElementById('username').value.trim();
       if (!name) return alert('Masukkan nama dulu!');
@@ -167,7 +230,6 @@
       loadUserData();
     }
 
-    // Logout
     function logout() {
       if (confirm('Yakin ingin logout?')) {
         currentUser = null;
@@ -178,7 +240,6 @@
       }
     }
 
-    // Load data per user
     function loadUserData() {
       const key = `rifqyBudget_${currentUser}`;
       expenses = JSON.parse(localStorage.getItem(key) || '[]');
@@ -186,7 +247,6 @@
       updateUI();
     }
 
-    // Save data
     function saveData() {
       const key = `rifqyBudget_${currentUser}`;
       localStorage.setItem(key, JSON.stringify(expenses));
@@ -250,7 +310,6 @@
         `).join('');
       }
 
-      // Grafik
       const months = [];
       const data = [];
       for (let i = 5; i >= 0; i--) {
@@ -270,8 +329,7 @@
       });
     }
 
-    // INIT
     checkLogin();
   </script>
 </body>
-        </html>
+                       </html>
