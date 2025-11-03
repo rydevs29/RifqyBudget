@@ -7,7 +7,6 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.png" type="image/png">
   <meta name="theme-color" content="#6c5ce7">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       --primary: #6c5ce7;
@@ -27,11 +26,20 @@
       :root { --bg: #2d3436; --card: #353b48; --text: #dfe6e9; --border: rgba(108,92,231,0.3); }
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--gap); }
+    body { 
+      font-family: 'Segoe UI', sans-serif; 
+      background: var(--bg); 
+      color: var(--text); 
+      min-height: 100vh; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      padding: var(--gap); 
+    }
     
     .container { width: 100%; max-width: 900px; margin: 0 auto; }
     .header { text-align: center; margin-bottom: 32px; }
-    h1 { font-size: 32px; color: var(--primary); margin-bottom: 4px; }
+    h1 { font-size: 34px; color: var(--primary); margin-bottom: 4px; }
     .subtitle { font-size: 16px; opacity: 0.8; }
 
     .grid { display: grid; gap: var(--gap); grid-template-columns: 1fr; }
@@ -79,6 +87,8 @@
       width: 100%;
       margin-top: 12px;
       font-weight: 600;
+      padding: 14px;
+      border-radius: 16px;
     }
     .btn-reset { background: var(--warning); color: #2d3436; }
     .btn-logout { background: var(--logout); }
@@ -89,11 +99,11 @@
       font-size: 20px;
       font-weight: bold;
       margin: 16px 0;
+      padding: 8px 0;
     }
     .total-expense { color: var(--danger); }
     .remaining { color: var(--success); }
 
-    .chart-container { height: 240px; margin: 16px 0; }
     .expense-item {
       display: flex;
       justify-content: space-between;
@@ -112,18 +122,24 @@
     .budget-input button { min-width: 60px; }
 
     .login-card {
-      max-width: 400px;
+      max-width: 380px;
       margin: 0 auto;
       text-align: center;
     }
-    .login-card input { width: 100%; margin-bottom: 16px; }
-    .login-card button { width: 100%; }
+    .login-card input { 
+      width: 100%; 
+      margin-bottom: 16px; 
+      padding: 16px;
+      font-size: 17px;
+    }
+    .login-card button { 
+      width: 100%; 
+      padding: 16px;
+      font-size: 17px;
+    }
 
     .hidden { display: none; }
     footer { text-align: center; margin-top: 40px; font-size: 12px; opacity: 0.7; }
-
-    /* SEMUA CARD PUNYA PADDING SAMA */
-    .card > *:last-child { margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -133,9 +149,9 @@
     <div class="login-card card">
       <div class="header">
         <h1>RifqyBudget</h1>
-        <p class="subtitle">Login untuk mulai mencatat keuangan</p>
+        <p class="subtitle">Masuk dengan nama kamu</p>
       </div>
-      <input type="text" id="username" placeholder="Masukkan Nama" autocomplete="off">
+      <input type="text" id="username" placeholder="Nama kamu" autocomplete="off">
       <button onclick="login()">Masuk</button>
     </div>
   </div>
@@ -181,19 +197,11 @@
       </div>
     </div>
 
-    <!-- GRAFIK -->
+    <!-- LIST PENGELUARAN -->
     <div class="card">
-      <h3 style="text-align:center; margin-bottom:16px; font-size:17px;">Grafik Pengeluaran Bulanan</h3>
-      <div class="chart-container">
-        <canvas id="monthlyChart"></canvas>
-      </div>
-    </div>
-
-    <!-- LIST -->
-    <div class="card">
-      <h3 style="margin-bottom:16px; font-size:17px;">Pengeluaran Bulan Ini</h3>
-      <div id="expenses-list">
-        <div style="text-align:center; opacity:0.6; font-size:15px;">Belum ada pengeluaran.</div>
+      <h3 style="margin-bottom:16px; font-size:17px; text-align:center;">Pengeluaran Bulan Ini</h3>
+      <div id="expenses-list" style="max-height: 300px; overflow-y: auto;">
+        <div style="text-align:center; opacity:0.6; font-size:15px; padding: 20px 0;">Belum ada pengeluaran.</div>
       </div>
     </div>
 
@@ -204,7 +212,6 @@
     let currentUser = null;
     let expenses = [];
     let budget = 0;
-    let monthlyChart;
 
     function checkLogin() {
       const saved = localStorage.getItem('rifqyBudget_user');
@@ -300,7 +307,7 @@
 
       const list = document.getElementById('expenses-list');
       if (monthExpenses.length === 0) {
-        list.innerHTML = '<div style="text-align:center; opacity:0.6; font-size:15px;">Belum ada pengeluaran.</div>';
+        list.innerHTML = '<div style="text-align:center; opacity:0.6; font-size:15px; padding: 20px 0;">Belum ada pengeluaran.</div>';
       } else {
         list.innerHTML = monthExpenses.map(e => `
           <div class="expense-item">
@@ -309,27 +316,9 @@
           </div>
         `).join('');
       }
-
-      const months = [];
-      const data = [];
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date();
-        d.setMonth(d.getMonth() - i);
-        const key = getMonthKey(d);
-        months.push(d.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' }));
-        const monthTotal = expenses.filter(e => getMonthKey(e.date) === key).reduce((a, c) => a + c.amount, 0);
-        data.push(monthTotal);
-      }
-
-      if (monthlyChart) monthlyChart.destroy();
-      monthlyChart = new Chart(document.getElementById('monthlyChart'), {
-        type: 'line',
-        data: { labels: months, datasets: [{ label: 'Pengeluaran', data, borderColor: '#e17055', backgroundColor: 'rgba(225,112,85,0.1)', fill: true, tension: 0.3 }] },
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => 'Rp' + v.toLocaleString('id-ID') } } } }
-      });
     }
 
     checkLogin();
   </script>
 </body>
-                       </html>
+</html>
