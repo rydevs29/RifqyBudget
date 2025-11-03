@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RifqyBudget – Login</title>
+  <title>RifqyBudget – Catat Keuangan</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.png" type="image/png">
   <meta name="theme-color" content="#6c5ce7">
@@ -32,72 +32,9 @@
       background: var(--bg); 
       color: var(--text); 
       min-height: 100vh; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
       padding: var(--gap); 
     }
-
-    /* LOGIN PAGE */
-    #login-page {
-      width: 100%;
-      max-width: 420px;
-      animation: fadeIn 0.6s ease-out;
-    }
-    .login-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 40px 32px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      text-align: center;
-    }
-    .login-card h1 {
-      font-size: 36px;
-      color: var(--primary);
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-    .login-card .subtitle {
-      font-size: 17px;
-      opacity: 0.8;
-      margin-bottom: 32px;
-    }
-    .login-card input {
-      width: 100%;
-      padding: 18px 20px;
-      font-size: 18px;
-      border: 2px solid var(--border);
-      border-radius: 18px;
-      background: var(--bg);
-      color: var(--text);
-      margin-bottom: 20px;
-      transition: border 0.3s;
-    }
-    .login-card input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(108,92,231,0.2);
-    }
-    .login-card button {
-      width: 100%;
-      padding: 18px;
-      font-size: 18px;
-      font-weight: 600;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 18px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .login-card button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(108,92,231,0.3);
-    }
-
-    /* MAIN APP */
-    .container { width: 100%; max-width: 900px; margin: 0 auto; }
+    .container { max-width: 900px; margin: 0 auto; }
     .header { text-align: center; margin-bottom: 32px; }
     h1 { font-size: 34px; color: var(--primary); margin-bottom: 4px; }
     .subtitle { font-size: 16px; opacity: 0.8; }
@@ -119,12 +56,6 @@
       flex-direction: column;
     }
 
-    /* CARD INPUT & STATS — SAMA BESAR */
-    .input-card, .stats-card {
-      min-height: 180px;
-      justify-content: space-between;
-    }
-
     .input-group {
       display: flex;
       gap: 14px;
@@ -133,7 +64,7 @@
     }
     input, select, button {
       padding: 15px 18px;
-      border-radius: 18px;
+      border-radius: 16px;
       font-size: 16px;
       flex: 1;
       min-width: 100px;
@@ -158,7 +89,7 @@
       margin-top: 14px;
       font-weight: 600;
       padding: 15px;
-      border-radius: 18px;
+      border-radius: 16px;
     }
     .btn-reset { background: var(--warning); color: #2d3436; }
     .btn-logout { background: var(--logout); }
@@ -169,6 +100,7 @@
       font-size: 20px;
       font-weight: bold;
       margin: 16px 0;
+      padding: 10px 0;
     }
     .total-expense { color: var(--danger); }
     .remaining { color: var(--success); }
@@ -181,34 +113,34 @@
     .budget-input input { flex: 1; }
     .budget-input button { min-width: 70px; }
 
-    /* LIST CARD — SAMA BESAR DENGAN CARD ATAS */
+    /* LIST — LEBAR PENUH, JARAK BESAR */
     .list-card {
       grid-column: 1 / -1;
-      min-height: 180px;
-      padding-top: 20px;
+      margin-top: var(--gap);
     }
     .list-card h3 {
       text-align: center;
       font-size: 18px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       font-weight: 600;
     }
     #expenses-list {
-      max-height: 280px;
+      max-height: 320px;
       overflow-y: auto;
       padding: 0 8px;
     }
     .expense-item {
       display: flex;
       justify-content: space-between;
-      padding: 16px 0;
+      padding: 20px 0; /* JARAK BESAR */
       border-bottom: 1px solid var(--border);
       font-size: 16px;
+      line-height: 1.5;
     }
     .expense-amount { 
       font-weight: 600; 
       color: var(--danger); 
-      font-size: 17px;
+      font-size: 18px;
     }
 
     .hidden { display: none; }
@@ -243,7 +175,7 @@
 
     <div class="grid">
       <!-- INPUT -->
-      <div class="card input-card">
+      <div class="card">
         <div class="input-group">
           <input type="text" id="desc" placeholder="Deskripsi (contoh: Beli Beras)">
           <input type="number" id="amount" placeholder="Rp">
@@ -261,7 +193,7 @@
       </div>
 
       <!-- STATS & BUDGET -->
-      <div class="card stats-card">
+      <div class="card">
         <div class="stats">
           <div>Total: <span id="total-expense" class="total-expense">Rp0</span></div>
           <div>Sisa: <span id="remaining" class="remaining">Rp0</span></div>
@@ -275,8 +207,8 @@
       </div>
     </div>
 
-    <!-- LIST CARD — SAMA BESAR -->
-    <div class="card list-card">
+    <!-- LIST PENGELUARAN — LEBAR PENUH -->
+    <div class="list-card">
       <h3>Pengeluaran Bulan Ini</h3>
       <div id="expenses-list">
         <div style="text-align:center; opacity:0.6; font-size:16px; padding: 24px 0;">Belum ada pengeluaran.</div>
@@ -399,4 +331,4 @@
     checkLogin();
   </script>
 </body>
-</html>
+  </html>
