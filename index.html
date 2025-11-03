@@ -20,7 +20,7 @@
       --logout: #e74c3c;
       --radius: 24px;
       --gap: 20px;
-      --padding: 28px;
+      --padding: 24px;
       --shadow: 0 12px 32px rgba(0,0,0,0.1);
     }
     @media (prefers-color-scheme: dark) {
@@ -38,7 +38,7 @@
       padding: var(--gap); 
     }
 
-    /* LOGIN PAGE — SUPER BAGUS */
+    /* LOGIN PAGE */
     #login-page {
       width: 100%;
       max-width: 420px;
@@ -119,10 +119,16 @@
       flex-direction: column;
     }
 
+    /* CARD INPUT & STATS — SAMA BESAR */
+    .input-card, .stats-card {
+      min-height: 180px;
+      justify-content: space-between;
+    }
+
     .input-group {
       display: flex;
       gap: 14px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
     }
     input, select, button {
@@ -160,10 +166,9 @@
     .stats {
       display: flex;
       justify-content: space-between;
-      font-size: 21px;
+      font-size: 20px;
       font-weight: bold;
-      margin: 18px 0;
-      padding: 10px 0;
+      margin: 16px 0;
     }
     .total-expense { color: var(--danger); }
     .remaining { color: var(--success); }
@@ -171,33 +176,34 @@
     .budget-input {
       display: flex;
       gap: 14px;
-      margin-top: 18px;
+      margin-top: 16px;
     }
     .budget-input input { flex: 1; }
     .budget-input button { min-width: 70px; }
 
-    /* LIST — LEBAR & JARAK BESAR */
-    .expense-list-card {
-      grid-column: 1 / -1; /* FULL WIDTH */
+    /* LIST CARD — SAMA BESAR DENGAN CARD ATAS */
+    .list-card {
+      grid-column: 1 / -1;
+      min-height: 180px;
+      padding-top: 20px;
     }
-    .expense-list-card h3 {
+    .list-card h3 {
       text-align: center;
       font-size: 18px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       font-weight: 600;
     }
     #expenses-list {
-      max-height: 360px;
+      max-height: 280px;
       overflow-y: auto;
-      padding: 8px 0;
+      padding: 0 8px;
     }
     .expense-item {
       display: flex;
       justify-content: space-between;
-      padding: 18px 0; /* JARAK BESAR */
+      padding: 16px 0;
       border-bottom: 1px solid var(--border);
       font-size: 16px;
-      line-height: 1.5;
     }
     .expense-amount { 
       font-weight: 600; 
@@ -216,7 +222,7 @@
 </head>
 <body>
 
-  <!-- LOGIN PAGE — SUPER BAGUS -->
+  <!-- LOGIN PAGE -->
   <div id="login-page">
     <div class="login-card">
       <div class="header">
@@ -237,7 +243,7 @@
 
     <div class="grid">
       <!-- INPUT -->
-      <div class="card">
+      <div class="card input-card">
         <div class="input-group">
           <input type="text" id="desc" placeholder="Deskripsi (contoh: Beli Beras)">
           <input type="number" id="amount" placeholder="Rp">
@@ -255,7 +261,7 @@
       </div>
 
       <!-- STATS & BUDGET -->
-      <div class="card">
+      <div class="card stats-card">
         <div class="stats">
           <div>Total: <span id="total-expense" class="total-expense">Rp0</span></div>
           <div>Sisa: <span id="remaining" class="remaining">Rp0</span></div>
@@ -269,11 +275,11 @@
       </div>
     </div>
 
-    <!-- LIST — LEBAR & JARAK BESAR -->
-    <div class="card expense-list-card">
+    <!-- LIST CARD — SAMA BESAR -->
+    <div class="card list-card">
       <h3>Pengeluaran Bulan Ini</h3>
       <div id="expenses-list">
-        <div style="text-align:center; opacity:0.6; font-size:16px; padding: 30px 0;">Belum ada pengeluaran.</div>
+        <div style="text-align:center; opacity:0.6; font-size:16px; padding: 24px 0;">Belum ada pengeluaran.</div>
       </div>
     </div>
 
@@ -379,7 +385,7 @@
 
       const list = document.getElementById('expenses-list');
       if (monthExpenses.length === 0) {
-        list.innerHTML = '<div style="text-align:center; opacity:0.6; font-size:16px; padding: 30px 0;">Belum ada pengeluaran.</div>';
+        list.innerHTML = '<div style="text-align:center; opacity:0.6; font-size:16px; padding: 24px 0;">Belum ada pengeluaran.</div>';
       } else {
         list.innerHTML = monthExpenses.map(e => `
           <div class="expense-item">
